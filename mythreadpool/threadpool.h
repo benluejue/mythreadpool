@@ -64,11 +64,15 @@ class Semaphore
 public:
 	Semaphore(int resLimit=0)
 		:resLimit_(resLimit)
+		,isExit(false);
 	{}
-	~Semaphore() = default;
+	~Semaphore(){
+		isExit = true;
+	}
 public:
 	// P是wait操作，也就是减操作 proberen试探尝试
 	void wait() {
+		if( isExit )return;
 		std::unique_lock<std::mutex>lock(mtx_);
 		cond_.wait(lock, [&]()->bool {return resLimit_ > 0;});
 		resLimit_--;
@@ -84,6 +88,7 @@ private:
 	int resLimit_;
 	std::condition_variable cond_;
 	std::mutex mtx_;
+	bool isExit;
 
 };
 
