@@ -36,15 +36,23 @@ void ThreadPool::setMode(PoolMode mode)
 }
 void ThreadPool::setTaskQueMaxThreadHould(int threshould)
 {
+	if (checkRunningState())
+		return;
 	this->taskQueMaxThread_ = threshould;
 }
 void ThreadPool::setInitThreadSize(int size)
 {
+	if (checkRunningState())
+		return;
 	this->initThreadsSize_ = size;
 }
 void ThreadPool::setThreadSizeThreadHould(int threadhold)
 {
-	this->threadSizeThresHold_ = threadhold;
+	if (checkRunningState())
+		return;
+	if(poolMode_ == PoolMode::CACHED){
+		this->threadSizeThresHold_ = threadhold;
+	}
 }
 // 生产者
 Result ThreadPool::submitTask(std::shared_ptr<Task> sp)
